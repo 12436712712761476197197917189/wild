@@ -1,0 +1,201 @@
+local Framework = loadstring(game:HttpGet("https://pastebinp.com/raw/KP1dUHFg"))()
+local Watermark = Framework:CreateWatermark("TypeHub | {game} | {fps}")
+local WriteLine = Framework:CreateWindow("Wild West", Vector2.new(492, 588), Enum.KeyCode.RightControl)
+
+local ESPSettings = { PlayerESP = { Enabled = false, TracersOn = false, BoxesOn = false, NamesOn = false, DistanceOn = false, HealthOn = false, ToolOn = false, FaceCamOn = false, Distance = 2000 }, ScrapESP = { Enabled = false, Distance = 2000, LegendaryOnly = true, RareOnly = true, GoodOnly = true, BadOnly = true }, SafeESP = { Enabled = false, Distance = 2000, BigOnly = true, SmallOnly = true }, RegisterESP = { Enabled = false, Distance = 2000 }, ESPColor = Color3.fromRGB(255, 255, 255), ToolColor = Color3.fromRGB(255, 255, 255)};
+local ESPFramework = loadstring(game:HttpGet("https://raw.githubusercontent.com/DOXSASHW/ewewew/main/esp", true))()
+
+
+local General = WriteLine:CreateTab("Main")
+local Main = General:CreateSector("Player", "left")
+local Main3 = General:CreateSector("Combat", "right")
+local Main4 = General:CreateSector("Visuals", "left")
+General:CreateConfigSystem("right")
+
+
+Main:AddSlider("Tp Speed", 5, 5, 100, 1, function(v)
+    _G.TPSPEED = v
+end)
+
+Main:AddButton("Ctrl + Click to tp", function()
+    local speed = (_G.TPSPEED) -- set this lower to make it slower
+    local bodyvelocityenabled = true -- set this to false if you are getting kicked
+    
+    local Imput = game:GetService("UserInputService")
+    local Plr = game.Players.LocalPlayer
+    local Mouse = Plr:GetMouse()
+    
+    function To(position)
+    local Chr = Plr.Character
+    if Chr ~= nil then
+    local ts = game:GetService("TweenService")
+    local char = game.Players.LocalPlayer.Character
+    local hm = char.HumanoidRootPart
+    local dist = (hm.Position - Mouse.Hit.p).magnitude
+    local tweenspeed = dist/tonumber(speed)
+    local ti = TweenInfo.new(tonumber(tweenspeed), Enum.EasingStyle.Linear)
+    local tp = {CFrame = CFrame.new(position)}
+    ts:Create(hm, ti, tp):Play()
+    if bodyvelocityenabled == true then
+    local bv = Instance.new("BodyVelocity")
+    bv.Parent = hm
+    bv.MaxForce = Vector3.new(100000,100000,100000)
+    bv.Velocity = Vector3.new(0,0,0)
+    wait(tonumber(tweenspeed))
+    bv:Destroy()
+    end
+    end
+    end
+    
+    Imput.InputBegan:Connect(function(input)
+       if input.UserInputType == Enum.UserInputType.MouseButton1 and Imput:IsKeyDown(Enum.KeyCode.LeftControl) then
+           To(Mouse.Hit.p)
+       end
+    end)
+end)
+
+
+
+local WALKSPEED = Main:AddToggle("Enable Walkspeed", false, function(v)
+    if v == true then
+        getgenv().WalkSpeedValue = _G.WalkSpeed; 
+        local Player = game:service'Players'.LocalPlayer;
+        Player.Character.Humanoid:GetPropertyChangedSignal'WalkSpeed':Connect(function()
+        Player.Character.Humanoid.WalkSpeed = getgenv().WalkSpeedValue;
+        end)
+        Player.Character.Humanoid.WalkSpeed = getgenv().WalkSpeedValue;
+        end 
+        if v == false then
+        getgenv().WalkSpeedValue = 16; 
+        local Player = game:service'Players'.LocalPlayer;
+        Player.Character.Humanoid:GetPropertyChangedSignal'WalkSpeed':Connect(function()
+        Player.Character.Humanoid.WalkSpeed = getgenv().WalkSpeedValue;
+        end)
+        Player.Character.Humanoid.WalkSpeed = getgenv().WalkSpeedValue;
+    end
+end)
+WALKSPEED:AddKeybind("None", "UserIToggle")
+    
+Main:AddSlider("Walkspeed", 5, 5, 30, 1, function(v)
+    _G.WalkSpeed = v
+end)
+
+
+Main:AddToggle("Infinite Stamina", false, function(v)
+    local functioname = "Boost"
+    local functionname2 = "LowerStamina"
+    local functionn
+    local functionn2
+    
+    for i , v in pairs (getgc()) do
+        if type(v) == "function" then
+            if getinfo(v).name == functioname then
+                functionn = v
+        end
+    end
+    end
+    for i , v in pairs (getgc()) do
+        if type(v) == "function" then
+            if getinfo(v).name == functionname2 then
+                functionn2 = v
+        end
+    end
+    end
+    
+    
+    setconstant(functionn2, 3, "nil")
+    setconstant(functionn, 6, 0)
+    setconstant(functionn, 7, 0)
+    setconstant(functionn, 21, 0)
+end)
+
+
+
+Main4:AddToggle("Enable ESP", ESPSettings.PlayerESP.Enabled, function(v)
+    ESPSettings.PlayerESP.Enabled = v
+
+    ESPFramework.Color = ESPSettings.ESPColor
+    ESPFramework.ToolColor = ESPSettings.ToolColor
+    ESPFramework.Tracers = ESPSettings.PlayerESP.TracersOn
+    ESPFramework.Names = ESPSettings.PlayerESP.NamesOn
+    ESPFramework.Health = ESPSettings.PlayerESP.HealthOn
+    ESPFramework.Distance = ESPSettings.PlayerESP.DistanceOn
+    ESPFramework.Tool = ESPSettings.PlayerESP.ToolOn
+    ESPFramework.Boxes = ESPSettings.PlayerESP.BoxesOn
+    ESPFramework.FaceCamera = ESPSettings.PlayerESP.FaceCamOn
+    ESPFramework:Toggle(ESPSettings.PlayerESP.Enabled)
+end, "PlayerESPsToggle")
+
+Main4:AddToggle("Face Camera", ESPSettings.PlayerESP.FaceCamOn, function(v)
+    ESPSettings.PlayerESP.FaceCamOn = v
+    ESPFramework.FaceCamera = ESPSettings.PlayerESP.FaceCamOn
+end)
+
+Main4:AddToggle("Box ESP", ESPSettings.PlayerESP.BoxesOn, function(v)
+    ESPSettings.PlayerESP.BoxesOn = v
+    ESPFramework.Boxes = ESPSettings.PlayerESP.BoxesOn
+end)
+
+Main4:AddToggle("Tracers ESP", ESPSettings.PlayerESP.TracersOn, function(v)
+    ESPSettings.PlayerESP.TracersOn = v
+    ESPFramework.Tracers = ESPSettings.PlayerESP.TracersOn
+end)
+
+Main4:AddToggle("Name ESP", ESPSettings.PlayerESP.NamesOn, function(v)
+    ESPSettings.PlayerESP.NamesOn = v
+    ESPFramework.Names = ESPSettings.PlayerESP.NamesOn
+end)
+
+Main4:AddToggle("Health ESP", ESPSettings.PlayerESP.HealthOn, function(v)
+    ESPSettings.PlayerESP.HealthOn = v
+    ESPFramework.Health = ESPSettings.PlayerESP.HealthOn
+end)
+
+
+Main4:AddToggle("Distance ESP", ESPSettings.PlayerESP.DistanceOn, function(v)
+    ESPSettings.PlayerESP.DistanceOn = v
+    ESPFramework.Distance = ESPSettings.PlayerESP.DistanceOn
+end)
+
+
+
+
+Main3:AddToggle("Fast Load", false, function(v)
+    for i, v in pairs(getgc(true)) do
+        if type(v) == "table" and rawget(v, "BaseRecoil") then
+          v.MaxAmmo = 50
+          v.LoadSpeed = 100
+          v.LoadEndSpeed = 100
+         end
+    end
+end)
+
+Main3:AddToggle("Fast Reload", false, function(v)
+    for i, v in pairs(getgc(true)) do
+        if type(v) == "table" and rawget(v, "BaseRecoil") then
+         v.ReloadSpeed = 100
+          v.MaxAmmo = 50
+          v.LoadSpeed = 100
+          v.LoadEndSpeed = 100
+         end
+    end
+end)
+
+Main3:AddToggle("No Recoil", false, function(v)
+    for i, v in pairs(getgc(true)) do
+        if type(v) == "table" and rawget(v, "BaseRecoil") then
+            v.BaseRecoil = 0.01
+            v.FireSpeed = 100
+            v.ProjectileAccuracy = 100
+            v.ProjectilePenetration = 100
+            v.ProjectilePower = 10000
+            v.ProjectileDamage = 10000
+            print("Modified:" , v)
+          for ch,e in pairs(v) do  
+           end
+        end
+     end
+end)
+
+
+
